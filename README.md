@@ -14,6 +14,12 @@ Both cards are **device-driven**: point them at an Aiper device and they find th
 right entities themselves, including ones renamed in the entity registry. They
 follow the active Home Assistant theme (light and dark) and have a visual editor.
 
+| Cleaner card | Water quality card |
+|---|---|
+| ![Aiper cleaner card](docs/cleaner-card.png) | ![Aiper water quality card](docs/monitor-card.png) |
+
+<sub>Screenshots from `demo/index.html`; icons are supplied by Home Assistant's icon set in a real install.</sub>
+
 > This is a frontend companion to the integration; it is not affiliated with Aiper.
 
 ---
@@ -115,6 +121,13 @@ npm install
 npm run build      # -> dist/aiper-card.js
 npm run watch      # rebuild on change
 npm run lint
+```
+
+Regenerate the README screenshots (serve the repo root on :8779 first):
+
+```bash
+npm i --no-save playwright && npx playwright install chromium
+node demo/shot.mjs
 ```
 
 `dist/aiper-card.js` is committed so manual installs and pre-release HACS installs
