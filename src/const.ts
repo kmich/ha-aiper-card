@@ -1,7 +1,7 @@
 /** Shared constants and lookup tables for the Aiper Lovelace cards. */
 
 // Bumped by the release workflow; keep in sync with package.json.
-export const CARD_VERSION = "0.1.0";
+export const CARD_VERSION = "0.1.1";
 
 export const CLEANER_CARD = "aiper-cleaner-card";
 export const MONITOR_CARD = "aiper-monitor-card";

@@ -1,6 +1,6 @@
 {
   "name": "ha-aiper-card",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lovelace cards for the Aiper Pool Cleaner & Water Quality Monitor integration",
   "type": "module",
   "private": true,
