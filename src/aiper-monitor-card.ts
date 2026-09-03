@@ -2,7 +2,13 @@ import { fireEvent, type HomeAssistant, type LovelaceCardEditor } from "custom-c
 import { LitElement, html, nothing, svg, type TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { EDITOR_TAG, MONITOR_CARD, MONITOR_ENTITY_KEYS, WATER_BANDS } from "./const";
+import {
+  EDITOR_TAG,
+  MONITOR_CARD,
+  MONITOR_ENTITY_ID_HINTS,
+  MONITOR_ENTITY_KEYS,
+  WATER_BANDS,
+} from "./const";
 import { resolveEntities } from "./resolve";
 import { sharedStyles } from "./styles";
 import type { AiperMonitorCardConfig, ResolvedEntities } from "./types";
@@ -64,6 +70,7 @@ export class AiperMonitorCard extends LitElement {
       device: this._config.device,
       anchorEntity: this._config.entity,
       keys: MONITOR_ENTITY_KEYS,
+      idHints: MONITOR_ENTITY_ID_HINTS,
       overrides: this._config.entities,
     });
   }

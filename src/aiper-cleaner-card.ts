@@ -8,6 +8,7 @@ import {
   CLEAN_PATH_ICONS,
   CLEANER_CARD,
   CLEANER_ENTITY_DOMAINS,
+  CLEANER_ENTITY_ID_HINTS,
   CLEANER_ENTITY_KEYS,
   DEFAULT_STATUS_PRESENTATION,
   EDITOR_TAG,
@@ -69,6 +70,7 @@ export class AiperCleanerCard extends LitElement {
       anchorEntity: this._config.entity,
       keys: CLEANER_ENTITY_KEYS,
       domains: CLEANER_ENTITY_DOMAINS,
+      idHints: CLEANER_ENTITY_ID_HINTS,
       overrides: this._config.entities,
     });
   }

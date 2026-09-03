@@ -79,6 +79,22 @@ export const CLEANER_ENTITY_KEYS = {
   propeller: "propeller",
 } as const;
 
+/** Extra `entity_id` suffixes for the non-admin fallback path, where the visible
+ * entity id differs from the `unique_id` key (the integration derives it from the
+ * entity's display name). */
+export const CLEANER_ENTITY_ID_HINTS: Record<string, string[]> = {
+  mode_select: ["cleaning_mode"],
+  wifi: ["wifi_connected"],
+};
+
+export const MONITOR_ENTITY_ID_HINTS: Record<string, string[]> = {
+  chlorine: ["free_chlorine"],
+  score: ["water_quality_score"],
+  result: ["water_quality_result"],
+  temperature: ["water_temperature"],
+  sample_time: ["water_sample_time"],
+};
+
 /** Domain hint per slot, used to disambiguate slots whose `unique_id` tail is
  * shared across platforms (e.g. `binary_sensor` + `switch` both `<sn>_running`). */
 export const CLEANER_ENTITY_DOMAINS: Record<string, string> = {

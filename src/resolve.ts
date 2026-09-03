@@ -57,6 +57,9 @@ export async function resolveEntities(
     anchorEntity?: string;
     keys: Record<string, string>;
     domains?: Record<string, string>;
+    /** Extra `entity_id` suffixes to try in step 3 when it differs from the key
+     * (e.g. slot `chlorine` -> key `rcl` -> entity id `..._free_chlorine`). */
+    idHints?: Record<string, string[]>;
     overrides?: EntityOverrides;
   },
 ): Promise<ResolvedEntities> {
@@ -108,8 +111,9 @@ export async function resolveEntities(
     // 3. entity_id suffix match, scoped to the device when we know it.
     const pool =
       deviceEntries.length > 0 ? deviceEntries.map((e) => e.entity_id) : Object.keys(hass.states);
+    const suffixes = [`_${key}`, ...(opts.idHints?.[slot]?.map((s) => `_${s}`) ?? [])];
     const suffixHit = pool.find(
-      (id) => id.endsWith(`_${key}`) && domainOk(id) && hass.states[id],
+      (id) => suffixes.some((s) => id.endsWith(s)) && domainOk(id) && hass.states[id],
     );
     if (suffixHit) map[slot] = suffixHit;
   }
