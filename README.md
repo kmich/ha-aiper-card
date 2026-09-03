@@ -14,9 +14,10 @@ Both cards are **device-driven**: point them at an Aiper device and they find th
 right entities themselves, including ones renamed in the entity registry. They
 follow the active Home Assistant theme (light and dark) and have a visual editor.
 
-| Cleaner card | Water quality card |
-|---|---|
-| ![Aiper cleaner card](docs/cleaner-card.png) | ![Aiper water quality card](docs/monitor-card.png) |
+<p>
+  <img src="docs/cleaner-card.png" alt="Aiper cleaner card" width="46%" />
+  <img src="docs/monitor-card.png" alt="Aiper water quality card" width="46%" />
+</p>
 
 <sub>Screenshots from `demo/index.html`; icons are supplied by Home Assistant's icon set in a real install.</sub>
 
