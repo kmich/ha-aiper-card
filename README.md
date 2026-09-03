@@ -131,6 +131,15 @@ npm i --no-save playwright && npx playwright install chromium
 node demo/shot.mjs
 ```
 
+Regenerate the social preview (`assets/social-preview.svg` → `docs/social-preview.png`):
+
+```bash
+node assets/render-social.mjs
+```
+
+`docs/social-preview.png` is uploaded once by hand under **Settings → General →
+Social preview** (GitHub has no API for it).
+
 `dist/aiper-card.js` is committed so manual installs and pre-release HACS installs
 work; CI fails if it is out of date. Tagging a release stamps the version and
 attaches the bundle.
