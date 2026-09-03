@@ -19,7 +19,7 @@ follow the active Home Assistant theme (light and dark) and have a visual editor
   <img src="docs/monitor-card.png" alt="Aiper water quality card" width="46%" />
 </p>
 
-<sub>Screenshots from `demo/index.html`; icons are supplied by Home Assistant's icon set in a real install.</sub>
+<sub>Rendered from <code>demo/index.html</code>. In Home Assistant the cards inherit your theme and the device's own artwork.</sub>
 
 > This is a frontend companion to the integration; it is not affiliated with Aiper.
 

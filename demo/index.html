@@ -48,37 +48,99 @@
   <body>
     <!--
       Minimal stand-ins so the real bundle's custom elements render outside HA.
-      IMPORTANT: these stubs must NOT mutate their own light DOM synchronously
-      inside connectedCallback / attributeChangedCallback. Doing so re-enters the
-      DOM while Lit is still walking the freshly cloned template and corrupts its
-      TreeWalker (symptom: adjacent ${} text bindings never commit). Real HA
-      elements don't do that. Keep these purely presentational via CSS.
+      Icon path data (demo/icons.js) is extracted from @mdi/js — the same set
+      Home Assistant ships — so no network is needed to render the screenshots.
+      IMPORTANT: these stubs must NOT mutate their own light DOM *synchronously*
+      inside connectedCallback / attributeChangedCallback / property setters.
+      Doing so re-enters the DOM while Lit is still walking the freshly cloned
+      template and corrupts its TreeWalker (symptom: adjacent ${} text bindings
+      never commit). All mutation here is deferred with queueMicrotask.
     -->
     <style>
-      ha-icon {
-        display: inline-flex;
-        width: var(--mdc-icon-size, 24px);
-        height: var(--mdc-icon-size, 24px);
-        border-radius: 50%;
-        border: 1.5px solid currentColor;
-        opacity: 0.55;
-        flex: 0 0 auto;
-      }
+      /* NOTE: document styles do not pierce the cards' shadow DOM, so the
+         <ha-icon> stub sizes itself with inline styles instead (see _sync). */
       ha-icon-button {
         display: inline-flex;
+        align-items: center;
+        justify-content: center;
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background: rgba(0, 0, 0, 0.06);
+        color: var(--secondary-text-color);
         cursor: pointer;
       }
+      ha-icon-button:hover {
+        background: rgba(0, 0, 0, 0.06);
+      }
     </style>
-    <script>
+    <script type="module">
+      import { ICON_PATHS } from "./icons.js";
+
+      const svgFor = (d) =>
+        d
+          ? `<svg viewBox="0 0 24 24" width="100%" height="100%" style="fill:currentColor;display:block"><path d="${d}"/></svg>`
+          : "";
+
+      class HaIcon extends HTMLElement {
+        static get observedAttributes() {
+          return ["icon"];
+        }
+        set icon(v) {
+          this._icon = v;
+          this._sync();
+        }
+        get icon() {
+          return this._icon ?? this.getAttribute("icon");
+        }
+        attributeChangedCallback(_n, _o, v) {
+          this._icon = v;
+          this._sync();
+        }
+        connectedCallback() {
+          this._sync();
+        }
+        _sync() {
+          const want = this.icon;
+          queueMicrotask(() => {
+            // Inline styles, because document CSS can't reach into the card's
+            // shadow DOM. --mdc-icon-size is a custom prop, so it still inherits
+            // through the boundary. Set properties individually so we don't wipe
+            // a `color:` the card put on the element (icons use currentColor).
+            const st = this.style;
+            st.display = "inline-flex";
+            st.alignItems = "center";
+            st.justifyContent = "center";
+            st.flex = "0 0 auto";
+            st.width = st.height = "var(--mdc-icon-size, 24px)";
+            if (this._rendered === want) return;
+            this._rendered = want;
+            this.innerHTML = svgFor(ICON_PATHS[want]);
+          });
+        }
+      }
+
+      class HaIconButton extends HTMLElement {
+        set path(v) {
+          this._path = v;
+          this._sync();
+        }
+        connectedCallback() {
+          this._sync();
+        }
+        _sync() {
+          queueMicrotask(() => {
+            if (!this._path || this._built) return;
+            this._built = true;
+            this.innerHTML =
+              `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="${this._path}"/></svg>`;
+          });
+        }
+      }
+
       class HaSwitch extends HTMLElement {
         connectedCallback() {
           if (this._built) return;
           this._built = true;
-          // Deferred: never touch the DOM synchronously during template clone.
           queueMicrotask(() => this._build());
         }
         _build() {
@@ -92,8 +154,9 @@
           this.appendChild(cb);
         }
       }
-      customElements.define("ha-icon", class extends HTMLElement {});
-      customElements.define("ha-icon-button", class extends HTMLElement {});
+
+      customElements.define("ha-icon", HaIcon);
+      customElements.define("ha-icon-button", HaIconButton);
       customElements.define("ha-switch", HaSwitch);
       customElements.define("ha-card", class extends HTMLElement {});
       window.addEventListener("hass-more-info", (e) => console.log("more-info:", e.detail.entityId));

@@ -8,7 +8,12 @@ mkdirSync("docs", { recursive: true });
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 900, height: 700 }, deviceScaleFactor: 2 });
 await page.goto("http://localhost:8779/demo/index.html", { waitUntil: "networkidle" });
-await page.waitForTimeout(500);
+await page
+  .locator("#cleaner")
+  .locator("ha-icon svg")
+  .first()
+  .waitFor({ state: "attached", timeout: 5000 });
+await page.waitForTimeout(300);
 
 await page.locator("#cleaner").screenshot({ path: "docs/cleaner-card.png" });
 await page.locator("#monitor").screenshot({ path: "docs/monitor-card.png" });
