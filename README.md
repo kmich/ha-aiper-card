@@ -135,6 +135,8 @@ node demo/shot.mjs
 work; CI fails if it is out of date. Tagging a release stamps the version and
 attaches the bundle.
 
+Release history is in [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 MIT
