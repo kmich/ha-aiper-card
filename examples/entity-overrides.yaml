@@ -1,0 +1,22 @@
+# You normally only need `device:`. Use `entities:` when auto-detection can't
+# find a slot (renamed entity, unusual model), or to point a card at hand-picked
+# entities without a device at all.
+#
+# Cleaner slots: status, battery, mode, warning, online, charging, solar_charging,
+#   in_water, running_switch, wifi, mode_select, clean_path_select,
+#   refresh_shadow, refresh_metadata, roller_brush, micromesh_filter,
+#   caterpillar_tread, propeller
+#
+# Monitor slots: ph, orp, ec, tds, chlorine, score, result, temperature,
+#   warning, online, sample_time
+
+type: custom:aiper-cleaner-card
+name: Scuba X1
+entities:
+  status: sensor.scuba_x1_status
+  battery: sensor.scuba_x1_battery
+  mode_select: select.scuba_x1_cleaning_mode
+  clean_path_select: select.scuba_x1_clean_path
+  warning: sensor.scuba_x1_warning
+  charging: binary_sensor.scuba_x1_charging
+  refresh_shadow: button.scuba_x1_refresh_shadow

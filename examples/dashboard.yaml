@@ -1,0 +1,26 @@
+# Example view combining both Aiper cards.
+# Replace the device ids with your own (Settings → Devices & Services → Aiper →
+# open a device → the id is in the URL, or use the visual editor's device picker).
+
+title: Pool
+views:
+  - title: Pool
+    path: pool
+    cards:
+      - type: custom:aiper-cleaner-card
+        device: REPLACE_WITH_CLEANER_DEVICE_ID
+
+      - type: custom:aiper-monitor-card
+        device: REPLACE_WITH_HYDROCOMM_DEVICE_ID
+        gauges:
+          - ph
+          - orp
+          - chlorine
+          - tds
+
+      # Compact variant, e.g. for a sidebar column.
+      - type: custom:aiper-cleaner-card
+        device: REPLACE_WITH_CLEANER_DEVICE_ID
+        compact: true
+        show_consumables: false
+        show_footer: false

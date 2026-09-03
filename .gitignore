@@ -1,0 +1,7 @@
+node_modules/
+*.log
+.DS_Store
+.rollup.cache/
+*.tsbuildinfo
+# dist/ is intentionally committed so the card can be installed manually and by
+# HACS before the first tagged release.

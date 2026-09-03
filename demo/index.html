@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aiper cards — demo harness</title>
+    <style>
+      :root {
+        --primary-text-color: #212121;
+        --secondary-text-color: #727272;
+        --disabled-text-color: #bdbdbd;
+        --divider-color: rgba(0, 0, 0, 0.12);
+        --card-background-color: #fff;
+        --secondary-background-color: #f0f0f0;
+        --primary-color: #03a9f4;
+        --info-color: #039be5;
+        --success-color: #43a047;
+        --warning-color: #ffa600;
+        --error-color: #db4437;
+        --ha-card-border-radius: 12px;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #f2f4f7;
+        font-family: Roboto, system-ui, sans-serif;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        align-items: flex-start;
+      }
+      .col {
+        width: 360px;
+      }
+      ha-card {
+        display: block;
+        background: var(--card-background-color);
+        border-radius: var(--ha-card-border-radius);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      }
+      h2 {
+        font: 500 14px/1 Roboto, sans-serif;
+        color: #555;
+        margin: 0 0 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      Minimal stand-ins so the real bundle's custom elements render outside HA.
+      IMPORTANT: these stubs must NOT mutate their own light DOM synchronously
+      inside connectedCallback / attributeChangedCallback. Doing so re-enters the
+      DOM while Lit is still walking the freshly cloned template and corrupts its
+      TreeWalker (symptom: adjacent ${} text bindings never commit). Real HA
+      elements don't do that. Keep these purely presentational via CSS.
+    -->
+    <style>
+      ha-icon {
+        display: inline-flex;
+        width: var(--mdc-icon-size, 24px);
+        height: var(--mdc-icon-size, 24px);
+        border-radius: 50%;
+        border: 1.5px solid currentColor;
+        opacity: 0.55;
+        flex: 0 0 auto;
+      }
+      ha-icon-button {
+        display: inline-flex;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      class HaSwitch extends HTMLElement {
+        connectedCallback() {
+          if (this._built) return;
+          this._built = true;
+          // Deferred: never touch the DOM synchronously during template clone.
+          queueMicrotask(() => this._build());
+        }
+        _build() {
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.checked = this.hasAttribute("checked") || !!this.checked;
+          cb.addEventListener("change", () => {
+            this.checked = cb.checked;
+            this.dispatchEvent(new Event("change"));
+          });
+          this.appendChild(cb);
+        }
+      }
+      customElements.define("ha-icon", class extends HTMLElement {});
+      customElements.define("ha-icon-button", class extends HTMLElement {});
+      customElements.define("ha-switch", HaSwitch);
+      customElements.define("ha-card", class extends HTMLElement {});
+      window.addEventListener("hass-more-info", (e) => console.log("more-info:", e.detail.entityId));
+    </script>
+
+    <div class="col">
+      <h2>aiper-cleaner-card</h2>
+      <aiper-cleaner-card id="cleaner"></aiper-cleaner-card>
+    </div>
+    <div class="col">
+      <h2>aiper-monitor-card</h2>
+      <aiper-monitor-card id="monitor"></aiper-monitor-card>
+    </div>
+
+    <script type="module">
+      import "../dist/aiper-card.js";
+
+      const s = (state, attrs = {}) => ({ state: String(state), attributes: attrs, entity_id: "" });
+      const withId = (obj, id) => ((obj.entity_id = id), obj);
+
+      const states = {
+        "sensor.scuba_x1_status": withId(
+          s("Cleaning", { friendly_name: "Scuba X1 Status", entity_picture: "" }),
+          "sensor.scuba_x1_status",
+        ),
+        "sensor.scuba_x1_battery": withId(s(63, { friendly_name: "Scuba X1 Battery" }), "sensor.scuba_x1_battery"),
+        "binary_sensor.scuba_x1_charging": withId(s("off"), "binary_sensor.scuba_x1_charging"),
+        "binary_sensor.scuba_x1_online": withId(s("on"), "binary_sensor.scuba_x1_online"),
+        "binary_sensor.scuba_x1_in_water": withId(s("on"), "binary_sensor.scuba_x1_in_water"),
+        "sensor.scuba_x1_warning": withId(s("No Warning"), "sensor.scuba_x1_warning"),
+        "select.scuba_x1_cleaning_mode": withId(
+          s("Smart", { options: ["Smart", "Floor", "Wall", "Waterline", "Scheduled"] }),
+          "select.scuba_x1_cleaning_mode",
+        ),
+        "select.scuba_x1_clean_path": withId(
+          s("S-shaped", { options: ["S-shaped", "Adaptive"] }),
+          "select.scuba_x1_clean_path",
+        ),
+        "sensor.scuba_x1_roller_brush": withId(s(72, { friendly_name: "Scuba X1 Roller Brush" }), "sensor.scuba_x1_roller_brush"),
+        "sensor.scuba_x1_micromesh_filter": withId(s(8, { friendly_name: "Scuba X1 MicroMesh Filter" }), "sensor.scuba_x1_micromesh_filter"),
+        "button.scuba_x1_refresh_shadow": withId(s("unknown", { friendly_name: "Refresh Shadow" }), "button.scuba_x1_refresh_shadow"),
+        "button.scuba_x1_refresh_metadata": withId(s("unknown", { friendly_name: "Refresh Metadata" }), "button.scuba_x1_refresh_metadata"),
+
+        "sensor.hydrocomm_ph": withId(s(7.4, { unit_of_measurement: "", friendly_name: "HydroComm pH" }), "sensor.hydrocomm_ph"),
+        "sensor.hydrocomm_orp": withId(s(710, { unit_of_measurement: "mV" }), "sensor.hydrocomm_orp"),
+        "sensor.hydrocomm_free_chlorine": withId(s(1.8, { unit_of_measurement: "mg/L" }), "sensor.hydrocomm_free_chlorine"),
+        "sensor.hydrocomm_tds": withId(s(940, { unit_of_measurement: "ppm" }), "sensor.hydrocomm_tds"),
+        "sensor.hydrocomm_water_quality_score": withId(s(86, { friendly_name: "HydroComm Water Quality Score" }), "sensor.hydrocomm_water_quality_score"),
+        "sensor.hydrocomm_water_quality_result": withId(s("Good"), "sensor.hydrocomm_water_quality_result"),
+        "sensor.hydrocomm_water_temperature": withId(s(27.5, { unit_of_measurement: "°C" }), "sensor.hydrocomm_water_temperature"),
+        "sensor.hydrocomm_warning": withId(s("No Warning"), "sensor.hydrocomm_warning"),
+        "sensor.hydrocomm_water_sample_time": withId(
+          s(new Date(Date.now() - 22 * 60000).toISOString()),
+          "sensor.hydrocomm_water_sample_time",
+        ),
+      };
+
+      const hass = {
+        states,
+        devices: {
+          dev_cleaner: { id: "dev_cleaner", name: "Scuba X1", identifiers: [["aiper", "T1B50900024"]] },
+          dev_monitor: { id: "dev_monitor", name: "HydroComm", identifiers: [["aiper", "W2X10100777"]] },
+        },
+        entities: Object.fromEntries(
+          Object.keys(states).map((id) => [
+            id,
+            { entity_id: id, device_id: id.includes("hydrocomm") ? "dev_monitor" : "dev_cleaner" },
+          ]),
+        ),
+        callWS: async () =>
+          Object.entries(states).map(([id]) => ({
+            entity_id: id,
+            device_id: id.includes("hydrocomm") ? "dev_monitor" : "dev_cleaner",
+            platform: "aiper",
+            unique_id:
+              (id.includes("hydrocomm") ? "W2X10100777_" : "T1B50900024_") +
+              id.split(".")[1].replace(/^(scuba_x1|hydrocomm)_/, "").replace("free_chlorine", "rcl").replace("cleaning_mode", "mode_selection").replace("water_quality_score", "water_quality_score").replace("water_sample_time", "wqs_sample_time").replace("water_temperature", "temperature"),
+          })),
+        callService: (d, srv, data) => console.log("callService", d, srv, data),
+      };
+
+      const cleaner = document.getElementById("cleaner");
+      cleaner.setConfig({ type: "custom:aiper-cleaner-card", device: "dev_cleaner" });
+      cleaner.hass = hass;
+
+      const monitor = document.getElementById("monitor");
+      monitor.setConfig({ type: "custom:aiper-monitor-card", device: "dev_monitor", gauges: ["ph", "orp", "chlorine", "tds"] });
+      monitor.hass = hass;
+    </script>
+  </body>
+</html>
